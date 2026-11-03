@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Clock</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.25rem; background: #0b1f3a; color: #eaf6fc; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; padding: 1rem; }
+  h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #20a4d8; }
+  #clock { font-size: clamp(3rem, 12vw, 6.5rem); font-variant-numeric: tabular-nums; letter-spacing: 0.04em; line-height: 1; }
+  #date { font-size: 1.25rem; color: #cfeeff; }
+  .controls { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+  button { cursor: pointer; border: 2px solid #20a4d8; border-radius: 999px; padding: 0.6rem 1.4rem; font-size: 1rem; background: transparent; color: #eaf6fc; }
+  button.active { background: #20a4d8; color: #0b1f3a; font-weight: 700; }
+  .note { font-size: 0.9rem; color: #94a3b8; text-align: center; max-width: 32rem; }
+</style>
+</head>
+<body>
+  <h1>Digital Clock</h1>
+  <div id="clock">--:--:--</div>
+  <div id="date">&nbsp;</div>
+  <div class="controls">
+    <button id="btn12" type="button">12-hour</button>
+    <button id="btn24" type="button" class="active">24-hour</button>
+  </div>
+  <p class="note">The time is taken from your own device clock, so it is always in your local time zone. No data leaves your browser.</p>
+  <script>
+    var use24Hour = true;
+    var clockEl = document.getElementById("clock");
+    var dateEl = document.getElementById("date");
+    var btn12 = document.getElementById("btn12");
+    var btn24 = document.getElementById("btn24");
+    function pad(n) { return n < 10 ? "0" + n : String(n); }
+    function tick() {
+      var now = new Date();
+      var hours = now.getHours();
+      var suffix = "";
+      if (!use24Hour) { suffix = hours >= 12 ? " PM" : " AM"; hours = hours % 12; if (hours === 0) hours = 12; }
+      clockEl.textContent = pad(hours) + ":" + pad(now.getMinutes()) + ":" + pad(now.getSeconds()) + suffix;
+      dateEl.textContent = now.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+    }
+    function setFormat(is24) { use24Hour = is24; btn24.classList.toggle("active", is24); btn12.classList.toggle("active", !is24); tick(); }
+    btn12.addEventListener("click", function () { setFormat(false); });
+    btn24.addEventListener("click", function () { setFormat(true); });
+    tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>
